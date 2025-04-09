@@ -3,8 +3,8 @@ from abc import ABC, abstractmethod
 from board import Board
 
 class Piece(ABC):
-    row = 8
-    col = 8
+    ROWS = 8
+    COLS = 8
     def __init__(self, name, color, value, texture=None,texture_rect = None):
         self.name = name
         self.color = color
@@ -16,12 +16,6 @@ class Piece(ABC):
         
     def set_texture(self, size=80):
         pass
-
-    def add_move(self, move):
-        self.moves.append(move)
-
-    def clear_moves(self):
-        self.moves = []
     
     @abstractmethod
     def get_moves(self, board, pos, validate_checks=True):
@@ -78,7 +72,7 @@ class Knight(Piece):
         
 class Bishop(Piece):
     def __init__(self, color):
-        super().__init__('bishop', color, 3.001)
+        super().__init__('bishop', color, 3.0)
 
     def get_moves(self, board, pos, validate_checks=True):
         pass

@@ -25,7 +25,8 @@ class Square:
         return self.has_piece() and self.piece.color != color
     
     def get_square(self):
-        pass
+        position = (self.row, self.cols)
+        return position
 
     @staticmethod
     def in_range(args):

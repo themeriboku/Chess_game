@@ -1,3 +1,7 @@
+from square import Square
+from piece import Piece
+from board import Board
+
 class DragHandler:
     def __init__(self):
         self.piece = None
