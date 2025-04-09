@@ -12,6 +12,7 @@ class Board:
     def __init__(self):
         self._create_board()
         self._place_pieces()
+        self.count_check = 0
 
     def _create_board(self):
         pass
@@ -37,13 +38,13 @@ class Board:
     def is_in_check(self, color):
         pass
 
-    def move_piece(self, piece, move):
+    def move_piece(self, piece:Piece, move):
         pass
 
     def create_clock(self, time_limit, turn=None):
         pass
 
-    def count_check(self):
+    def _count_check(self):
         pass
     
     def capture_piece(self):

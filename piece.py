@@ -3,8 +3,6 @@ from abc import ABC, abstractmethod
 from board import Board
 
 class Piece(ABC):
-    ROWS = 8
-    COLS = 8
     def __init__(self, name, color, value, texture=None,texture_rect = None):
         self.name = name
         self.color = color
@@ -32,7 +30,7 @@ class Pawn(Piece):
         self.dir = -1 if color == 'white' else 1
         self.en_passant = False
 
-    def get_moves(self, board: Square, pos, validate_checks=True): #ต้องแก้
+    def get_moves(self, board:Square, pos, validate_checks=True):
         row, col = pos
         moves = []
         # ก้าวเดียวข้างหน้า
@@ -56,46 +54,92 @@ class Knight(Piece):
     def __init__(self, color):
         super().__init__('knight', color, 3.0)
         
-    def get_moves(self, board, pos, validate_checks=True):
+    def get_moves(self, board:Square, pos, valid_checks=True):
         possible_square = [
             (pos[0] + 2, pos[1] + 1), (pos[0] + 2, pos[1] - 1),
             (pos[0] - 2, pos[1] + 1), (pos[0] - 2, pos[1] - 1),
             (pos[0] + 1, pos[1] + 2), (pos[0] + 1, pos[1] - 2),
             (pos[0] - 1, pos[1] + 2), (pos[0] - 1, pos[1] - 2)
         ]
-        valid_moves = []
+        moves = []
         for square in possible_square:
             if Square.in_range(square):
                 if board.get_square(square).isempty() or board.get_square(square).has_enemy_piece(self.color):
-                    valid_moves.append(square)
-        return valid_moves
+                    moves.append(square)
+        return moves
         
 class Bishop(Piece):
     def __init__(self, color):
         super().__init__('bishop', color, 3.0)
 
-    def get_moves(self, board, pos, validate_checks=True):
-        pass
+    def get_moves(self, board:Square, pos, validate_checks=True):
+        moves = []
+        directions = [(1,1),(1,-1),(-1,1),(-1,-1)]
+        for dr, dc in directions:
+            r, c = pos
+            while True:
+                r += dr; c += dc
+                if not Square.in_range((r,c)): break
+                sq = board.get_square((r,c))
+                if sq.isempty():
+                    moves.append((r,c))
+                else:
+                    if sq.has_enemy_piece(self.color):
+                        moves.append((r,c))
+                    break
+        return moves
 
 class Rook(Piece):
     def __init__(self, color):
         super().__init__('rook', color, 5.0)
 
-    def get_moves(self, board, pos, validate_checks=True):
+    def get_moves(self, board:Square, pos, validate_checks=True):
         pass
 
 class Queen(Piece):
     def __init__(self, color):
         super().__init__('queen', color, 9.0)
 
-    def get_moves(self, board, pos, validate_checks=True):
+    def get_moves(self, board:Square, pos, validate_checks=True):
         pass
 
 class King(Piece):
     def __init__(self, color):
         super().__init__('king', color, 100.0)
+        self.moved = False
+        self.castle = False
         self.left_rook = None
         self.right_rook = None
 
-    def get_moves(self, board, pos, validate_checks=True):
-        pass
+    def get_moves(self, board:Square, pos, validate_checks=True):
+        
+        row, col = pos
+        moves = []
+        # 8 ทิศรอบตัว
+        for dr in (-1,0,1):
+            for dc in (-1,0,1):
+                if dr==0 and dc==0: continue
+                dest = (row+dr, col+dc)
+                if Square.in_range(dest):
+                    sq = board.get_square(dest)
+                    if sq.isempty() or sq.has_enemy_piece(self.color):
+                        moves.append(dest)
+
+        # Castling: หาทางขวา (king-side) และซ้าย (queen-side)
+        if not self.moved and validate_checks:
+            # King-side
+            if self.right_rook and not self.right_rook.moved:
+                # ระหว่าง King และ Rook ไม่มีชิ้นกีดขวาง
+                path = [(row, col+1), (row, col+2)]
+                if all(board.get_square(p).isempty() for p in path):
+                    # ตรวจว่าผ่าน check หรือไม่
+                    if not any(board.causes_check(self.color, pos, p) for p in [(row, col+1), (row, col+2)]):
+                        moves.append((row, col+2))
+            # Queen-side
+            if self.left_rook and not self.left_rook.moved:
+                path = [(row, col-1), (row, col-2), (row, col-3)]
+                if all(board.get_square(p).isempty() for p in path[:-1]):
+                    if not any(board.causes_check(self.color, pos, p) for p in [(row, col-1), (row, col-2)]):
+                        moves.append((row, col-2))
+
+        return moves
