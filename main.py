@@ -14,4 +14,28 @@ class Main:
         self.game = Game()
 
     def mainloop(self):
-        pass
+        running = True
+        clock = pygame.time.Clock()  # เพื่อควบคุม FPS
+        while running:
+            # ตรวจสอบ event ต่างๆ
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                
+            self.game.show_back_ground(self.screen)
+            self.game.show_piece()
+            self.game.show_available_moves()
+            
+            # อัปเดตหน้าจอ
+            pygame.display.flip()
+            
+            # จำกัด FPS ที่ 60 frame ต่อวินาที
+            clock.tick(60)
+
+
+
+
+if __name__ == "__main__":
+    main = Main()
+    main.mainloop()
+    pygame.quit()

@@ -1,6 +1,7 @@
 from square import Square
 from abc import ABC, abstractmethod
-from board import Board
+import os
+import pygame
 
 class Piece(ABC):
     def __init__(self, name, color, value, texture=None,texture_rect = None):
@@ -13,14 +14,31 @@ class Piece(ABC):
         self.texture_rect = texture_rect
         
     def set_texture(self, size=80):
-        pass
+        if size <= 80:
+            folder = r"D:\forlearning\Chess_game\picture\imgs-80px"
+        else:
+            folder = r"D:\forlearning\Chess_game\picture\imgs-128px"
+
+        # ตั้งชื่อไฟล์: เช่น "white_pawn.png"
+        filename = f"{self.color}_{self.name}.png"
+        full_path = os.path.join(folder, filename)
+        try:
+            # โหลดภาพพร้อม alpha channel (transparency)
+            self.texture = pygame.image.load(full_path).convert_alpha()
+            # ปรับขนาดภาพให้ตรงกับ size ที่ต้องการ ถ้าจำเป็น
+            if self.texture.get_width() != size or self.texture.get_height() != size:
+                self.texture = pygame.transform.scale(self.texture, (size, size))
+            self.texture_rect = self.texture.get_rect()
+        except Exception as e:
+            print(f"Error loading texture from {full_path}: {e}")
+            self.texture = None
     
     @abstractmethod
     def get_moves(self, board, pos, validate_checks=True):
         """Return pseudo‑legal moves."""
         pass
 
-    def valid_moves(self, board:Board, pos):
+    def valid_moves(self, board:Square, pos):
         raw = self.get_moves(board, pos, validate_checks=False)
         return [m for m in raw if not board.causes_check(self.color, pos, m)]
 
@@ -73,35 +91,22 @@ class Bishop(Piece):
         super().__init__('bishop', color, 3.0)
 
     def get_moves(self, board:Square, pos, validate_checks=True):
-        moves = []
-        directions = [(1,1),(1,-1),(-1,1),(-1,-1)]
-        for dr, dc in directions:
-            r, c = pos
-            while True:
-                r += dr; c += dc
-                if not Square.in_range((r,c)): break
-                sq = board.get_square((r,c))
-                if sq.isempty():
-                    moves.append((r,c))
-                else:
-                    if sq.has_enemy_piece(self.color):
-                        moves.append((r,c))
-                    break
-        return moves
+        return board.straight_line_moves(self, pos, [(1,1),(1,-1),(-1,1),(-1,-1)], validate_checks)
 
 class Rook(Piece):
     def __init__(self, color):
         super().__init__('rook', color, 5.0)
 
     def get_moves(self, board:Square, pos, validate_checks=True):
-        pass
+        return board.straight_line_moves(self, pos, [(1,0),(-1,0),(0,1),(0,-1)], validate_checks)
 
 class Queen(Piece):
     def __init__(self, color):
         super().__init__('queen', color, 9.0)
 
     def get_moves(self, board:Square, pos, validate_checks=True):
-        pass
+        dirs = [(1,0),(-1,0),(0,1),(0,-1),(1,1),(1,-1),(-1,1),(-1,-1)]
+        return board.straight_line_moves(self, pos, dirs, validate_checks)
 
 class King(Piece):
     def __init__(self, color):
