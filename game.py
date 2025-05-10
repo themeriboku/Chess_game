@@ -19,9 +19,11 @@ class Game:
         self.background = self.create_background()
         self.highlighted_moves = []
 
-        self.black_clock = Clock(1800)
-        self.white_clock = Clock(1800)
+        self.black_clock = Clock(3600)
+        self.white_clock = Clock(3600)
         
+        self.game_over = False
+        self.winner = None
     
     def create_background(self):
         background = pygame.Surface((self.WIDTH, self.HEIGHT))
@@ -59,8 +61,8 @@ class Game:
         self.dragger.update_blit(surface, self.SQSIZE)
 
     def next_turn(self):
-        self.next_player = 'white' if self.next_player == 'black' else 'black'
-
+        if not self.game_over:
+            self.next_player = 'white' if self.next_player == 'black' else 'black'
     def show_clocks(self, surface):
         # Draw a panel on the right side (from x=800 to 1000)
         panel_rect = pygame.Rect(self.WIDTH, 0, 200, self.HEIGHT)
@@ -114,6 +116,16 @@ class Game:
         white_rect = white_text.get_rect(center=(self.WIDTH + 100, 2 * self.HEIGHT // 3))
         surface.blit(black_text, black_rect)
         surface.blit(white_text, white_rect)
+
+    def check_game_over(self):
+        # ถ้าไม่มี move เลย → game over
+        if self.board.is_checkmate(self.next_player):
+            self.game_over = True
+            # ฝ่ายที่เพิ่งเดินชนะ (opponent of next_player)
+            self.winner = 'black' if self.next_player == 'white' else 'white'
+            # หยุดนาฬิกา
+            self.white_clock.stop()
+            self.black_clock.stop()
             
     def reset(self):
         self.__init__()

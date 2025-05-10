@@ -87,11 +87,12 @@ class Board:
         return valid
 
     def causes_check(self, piece, from_pos, to_pos):
-        snapshot = self._copy_board()
-        # ทำการเดินจริงบน self
+        if self.get_square(from_pos).piece is None:
+            return False
+        snapshot = self._copy_board()  # take snapshot BEFORE making the move
         self.apply_move((from_pos, to_pos))
         in_check = self.is_in_check(piece.color)
-        # คืนกระดานเดิม
+        # Restore board to snapshot
         self.board = snapshot
         self.count_check += 1
         return in_check
@@ -105,6 +106,12 @@ class Board:
         ย้าย piece จาก src -> dst ของกระดาน และบันทึก history
         คืนค่า piece ที่ถูกจับ (หรือ None)
         """
+        from_pos, to_pos = move
+        moving_square = self.get_square(from_pos)
+        moving_piece = moving_square.piece
+        # Only modify moving_piece if it exists
+        if moving_piece is not None:
+            moving_piece.moved = True
         (r0, c0), (r1, c1) = move
         src_sq = self.get_square((r0, c0))
         dst_sq = self.get_square((r1, c1))
@@ -201,3 +208,14 @@ class Board:
         if not self.history:
             return None
         return self.history[-1]['captured']
+    
+    def is_checkmate(self, color):
+        print(f"[DEBUG] Checking checkmate for {color}")
+        # For every piece of the given color, check if there is a valid move.
+        for row in self.board:
+            for sq in row:
+                if sq.has_piece() and sq.piece.color == color:
+                    moves = sq.piece.valid_moves(self, (sq.row, sq.cols))
+                    if moves:  # At least one legal move exists.
+                        return False
+        return True
