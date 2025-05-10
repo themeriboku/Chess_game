@@ -33,6 +33,7 @@ A digital, two-player chess game built with Pygame and Python, augmented by real
 ## Installation
 
 1. **Download the ZIP (v1.0)**  
+   make sure python is install  
    Download the latest release (version 1.0) from our GitHub releases page:  
 
 2. **Extract the archive**  
