@@ -2,7 +2,7 @@ import pygame
 from board import Board
 from dragger import DragHandler
 from square import Square
-
+from clock import Clock
 
 class Game:
     WIDTH = 800
@@ -18,6 +18,10 @@ class Game:
         self.dragger = DragHandler()
         self.background = self.create_background()
         self.highlighted_moves = []
+
+        self.black_clock = Clock(1800)
+        self.white_clock = Clock(1800)
+        
     
     def create_background(self):
         background = pygame.Surface((self.WIDTH, self.HEIGHT))
@@ -56,6 +60,60 @@ class Game:
 
     def next_turn(self):
         self.next_player = 'white' if self.next_player == 'black' else 'black'
+
+    def show_clocks(self, surface):
+        # Draw a panel on the right side (from x=800 to 1000)
+        panel_rect = pygame.Rect(self.WIDTH, 0, 200, self.HEIGHT)
+        pygame.draw.rect(surface, (200, 200, 200), panel_rect)
+
+        # Create a font to render text
+        font = pygame.font.Font(None, 36)
+
+        # Get current times from clocks
+        white_time = self.white_clock.time_record()
+        black_time = self.black_clock.time_record()
+
+        # Format time into MM:SS
+        def format_time(t):
+            minutes = int(t) // 60
+            seconds = int(t) % 60
+            return f"{minutes:02d}:{seconds:02d}"
+
+        white_text = font.render("White: " + format_time(white_time), True, (0, 0, 0))
+        black_text = font.render("Black: " + format_time(black_time), True, (0, 0, 0))
+
+        # Swap positions: black clock on top, white clock below
+        black_rect = black_text.get_rect(center=(self.WIDTH + 100, self.HEIGHT // 3))
+        white_rect = white_text.get_rect(center=(self.WIDTH + 100, 2 * self.HEIGHT // 3))
+        surface.blit(black_text, black_rect)
+        surface.blit(white_text, white_rect)
     
+    def show_clocks(self, surface):
+        # Draw a panel on the right side (from x=800 to 1000)
+        panel_rect = pygame.Rect(self.WIDTH, 0, 200, self.HEIGHT)
+        pygame.draw.rect(surface, (200, 200, 200), panel_rect)
+
+        # Create a font to render text
+        font = pygame.font.Font(None, 36)
+
+        # Get current times from clocks
+        white_time = self.white_clock.time_record()
+        black_time = self.black_clock.time_record()
+
+        # Format time into MM:SS
+        def format_time(t):
+            minutes = int(t) // 60
+            seconds = int(t) % 60
+            return f"{minutes:02d}:{seconds:02d}"
+
+        white_text = font.render("White: " + format_time(white_time), True, (0, 0, 0))
+        black_text = font.render("Black: " + format_time(black_time), True, (0, 0, 0))
+
+        # Swap positions: black clock on top, white clock below
+        black_rect = black_text.get_rect(center=(self.WIDTH + 100, self.HEIGHT // 3))
+        white_rect = white_text.get_rect(center=(self.WIDTH + 100, 2 * self.HEIGHT // 3))
+        surface.blit(black_text, black_rect)
+        surface.blit(white_text, white_rect)
+            
     def reset(self):
         self.__init__()

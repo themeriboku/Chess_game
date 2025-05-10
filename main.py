@@ -3,7 +3,7 @@ from game import Game
 from square import Square
 
 class Main:
-    WIDTH = 800
+    WIDTH = 1000
     HEIGHT = 800
     ROWS = 8
     COLS = 8
@@ -17,6 +17,7 @@ class Main:
         )
         pygame.display.set_caption('Chess')
         self.game = Game()
+        self.game.white_clock.start()
 
     def mainloop(self):
         running = True
@@ -53,6 +54,12 @@ class Main:
                         if (nr, nc) in self.game.highlighted_moves:
                             self.game.board.move_piece(self.game.dragger.piece, (nr, nc))
                             # สลับคนเล่นก็ต่อเมื่อย้ายจริง
+                            if self.game.next_player == 'white':
+                                self.game.white_clock.stop()
+                                self.game.black_clock.start()
+                            else:
+                                self.game.black_clock.stop()
+                                self.game.white_clock.start()
                             self.game.next_player = 'black' if self.game.next_player == 'white' else 'white'
 
                         # ไม่ว่าจะย้ายได้หรือไม่ ก็ดับการลากและล้าง highlight
@@ -64,6 +71,7 @@ class Main:
             self.game.show_back_ground(self.screen)
             self.game.show_piece()
             self.game.show_available_moves()
+            self.game.show_clocks(self.screen)
 
             # อัปเดตหน้าจอครั้งเดียว
             pygame.display.flip()
