@@ -30,9 +30,26 @@ A digital, two-player chess game built with Pygame and Python, augmented by real
 
 ---
 
-## 🛠 Installation
+## Installation
 
-1. **Clone the repository**  
+1. **Download the ZIP (v1.0)**  
+   Download the latest release (version 1.0) from our GitHub releases page:  
+
+2. **Extract the archive**  
    ```bash
-   git clone https://github.com/yourusername/chess-game-analytics.git
-   cd chess-game-analytics
+   unzip chess_game-v1.0.zip
+   cd Chess_game-v1.0
+
+3. **Create a virtual environment (recommended)**
+  bash
+  python -m venv venv
+  # macOS/Linux
+  source venv/bin/activate
+  # Windows (PowerShell)
+  .\venv\Scripts\Activate.ps1
+
+4. **install pygame**
+  pip install pygame or pip3 install pygame
+
+5. **run game**
+  python main.py
