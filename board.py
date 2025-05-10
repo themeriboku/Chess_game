@@ -186,6 +186,9 @@ class Board:
                     rook.move(from_row, from_col - 1)
                     self.board[from_row][from_col - 1].piece = rook
                     rook.moved = True
+        
+        if piece.name == 'pawn':
+            self.promote_pawn(piece, (to_row, to_col))
 
         # Append move to history (optional, for undo)
         self.history.append({
@@ -219,3 +222,14 @@ class Board:
                     if moves:  # At least one legal move exists.
                         return False
         return True
+    
+    def promote_pawn(self, pawn, pos):
+        row, col = pos
+        if (pawn.color == 'white' and row == 0) or (pawn.color == 'black' and row == 7):
+            print(f"[DEBUG] Pawn at {pos} is eligible for promotion.")
+            # Display promotion options (e.g., Queen, Rook, Bishop, Knight)
+            # For simplicity, we'll promote to a Queen by default
+            promoted_piece = Queen(pawn.color)
+            promoted_piece.move(row, col)
+            self.get_square(pos).piece = promoted_piece
+            print(f"[DEBUG] Pawn promoted to {promoted_piece.name} at {pos}.")
