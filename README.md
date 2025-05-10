@@ -43,9 +43,9 @@ A digital, two-player chess game built with Pygame and Python, augmented by real
 3. **Create a virtual environment (recommended)**
   bash
   python -m venv venv
-  # macOS/Linux
+  macOS/Linux
   source venv/bin/activate
-  # Windows (PowerShell)
+  Windows (PowerShell)
   .\venv\Scripts\Activate.ps1
 
 4. **install pygame**
