@@ -41,15 +41,15 @@ A digital, two-player chess game built with Pygame and Python, augmented by real
    cd Chess_game-v1.0
 
 3. **Create a virtual environment (recommended)**
-  bash
-  python -m venv venv
-  macOS/Linux
-  source venv/bin/activate
-  Windows (PowerShell)
-  .\venv\Scripts\Activate.ps1
+    bash
+    python -m venv venv
+    macOS/Linux
+    source venv/bin/activate
+    indows (PowerShell)
+    .\venv\Scripts\Activate.ps1
 
 4. **install pygame**
-  pip install pygame or pip3 install pygame
+    pip install pygame or pip3 install pygame
 
 5. **run game**
-  python main.py
+   python main.py
