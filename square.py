@@ -24,10 +24,6 @@ class Square:
     def has_enemy_piece(self, color):
         return self.has_piece() and self.piece.color != color
     
-    def get_square(self):
-        position = (self.row, self.cols)
-        return position
-
     @staticmethod
     def in_range(args):
         for arg in args:

@@ -1,3 +1,5 @@
+import time
+
 class Clock:
     def __init__(self, time_limit, turn = None):
         self.time_limit = time_limit
@@ -7,16 +9,24 @@ class Clock:
         self.end_time = None
 
     def start(self):
-        pass
+        if self.start_time is None:
+            self.start_time = time.time()
 
     def stop(self):
-        pass
+        if self.start_time is not None:
+            elapsed = time.time() - self.start_time
+            self.remaining_time = max(0, self.remaining_time - elapsed)
+            self.start_time = None
 
     def reset(self):
-        pass
+        self.remaining_time = self.time_limit
+        self.start_time = None
 
     def is_running(self):
-        return False
+        return self.start_time is not None
     
     def time_record(self):#จับเวลาไปให้game_data
-        pass
+        if self.is_running():
+            elapsed = time.time() - self.start_time
+            return max(0, self.remaining_time - elapsed)
+        return self.remaining_time

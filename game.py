@@ -17,6 +17,7 @@ class Game:
         self.board = Board()
         self.dragger = DragHandler()
         self.background = self.create_background()
+        self.highlighted_moves = []
     
     def create_background(self):
         background = pygame.Surface((self.WIDTH, self.HEIGHT))
@@ -29,30 +30,29 @@ class Game:
 
     def show_back_ground(self, surface):
         surface.blit(self.background, (0, 0))
-        pygame.display.flip()
         
     def show_piece(self):
         surface = pygame.display.get_surface()
     
         # วนลูปผ่านแต่ละแถวในกระดาน
         for row in self.board.board:
-            # สำหรับแต่ละ square ในแถวนั้น
             for square in row:
-                # ถ้ามี piece ใน square นั้น
                 if square.has_piece():
                     piece = square.piece
-                    # หาก piece กำลังถูกลากอยู่ (dragging) ให้ข้ามการวาด เพราะจะมี DragHandler ดูแลแยกวาดให้แล้ว
                     if self.dragger.dragging and self.dragger.piece == piece:
                         continue
-                    # คำนวณตำแหน่งพิกเซลบนหน้าจอสำหรับ square นี้
-                    x = square.cols * self.SQSIZE
-                    y = square.row * self.SQSIZE
-                    # ตรวจสอบว่ามี texture ของ piece อยู่หรือไม่ ก่อนวาด
+                    # คำนวณตำแหน่งพิกเซลกลางใน square
+                    x = square.cols * self.SQSIZE + (self.SQSIZE - piece.texture.get_width()) // 2
+                    y = square.row * self.SQSIZE + (self.SQSIZE - piece.texture.get_height()) // 2
                     if piece.texture:
                         surface.blit(piece.texture, (x, y))
 
     def show_available_moves(self):
-        pass
+        surface = pygame.display.get_surface()
+        for r, c in self.highlighted_moves:
+            center = (c*self.SQSIZE + self.SQSIZE//2, r*self.SQSIZE + self.SQSIZE//2)
+            pygame.draw.circle(surface, (0, 0, 255), center, 8)
+        self.dragger.update_blit(surface, self.SQSIZE)
 
     def next_turn(self):
         self.next_player = 'white' if self.next_player == 'black' else 'black'
