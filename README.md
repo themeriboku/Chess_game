@@ -1,4 +1,4 @@
-# Chess Game with Data Analytics
+# Chess Game 
 
 A digital, two-player chess game built with Pygame and Python, augmented by real-time data tracking and post-game analysis.  Track metrics like move time, material balance, and checkmate frequency, then view histograms, pie charts, line graphs, tables, and scatter plots to gain insights into your play.
 
